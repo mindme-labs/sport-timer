@@ -18,7 +18,30 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 ---
 
+## Development Workflow (Per Phase)
+
+Each phase follows this workflow:
+
+```
+1. Create branch `phase-N/short-description` from `main`
+2. Implement the phase, push commits to GitHub
+3. Vercel auto-deploys a PREVIEW → test on the preview URL
+   (e.g., sport-timer-git-phase-1-foundation-mindme-labs.vercel.app)
+4. If issues found → fix on the same branch → push → new preview auto-deploys
+5. Once approved → merge branch into `main` → Vercel deploys to PRODUCTION
+6. Proceed to next phase
+```
+
+**Key rules:**
+- `main` branch always stays stable (production-ready)
+- Never merge to `main` until the preview is tested and approved
+- Fixes happen on the feature branch, not on `main`
+- Each phase builds on the previous one, so phases are sequential
+
+---
+
 ## Phase 1: Foundation (Auth + DB + App Shell)
+**Branch:** `phase-1/foundation`
 
 **Goal:** User can sign in with Google, session persists, MongoDB connected, app shell with mobile navigation.
 
@@ -37,9 +60,12 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 **Checkpoint:** User can sign in with Google → lands on `/dashboard` placeholder → session persists across refreshes → sign out works.
 
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`.
+
 ---
 
 ## Phase 2: Onboarding + Program Management
+**Branch:** `phase-2/onboarding`
 
 **Goal:** New user creates their first workout program via guided onboarding. Returning user can edit their program.
 
@@ -54,9 +80,12 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 **Checkpoint:** New user completes onboarding → program saved to MongoDB → user redirected to dashboard. User can edit program from `/program`.
 
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`.
+
 ---
 
 ## Phase 3: Dashboard
+**Branch:** `phase-3/dashboard`
 
 **Goal:** User sees today's workouts based on cycle calculation, can start, skip day, or manually complete.
 
@@ -71,9 +100,12 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 **Checkpoint:** Dashboard shows correct cycle day workouts. Skip Day advances cycle. Manual complete creates log. Start navigates to timer.
 
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`.
+
 ---
 
 ## Phase 4: Timer Engine (Core Feature)
+**Branch:** `phase-4/timer-engine`
 
 **Goal:** Full workout execution with countdown, rest periods, skip exercise, stop flow, audio cues, wake lock.
 
@@ -94,9 +126,12 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 **Checkpoint:** User starts workout → timer counts down through exercises/rounds with rest → audio beeps at 3/2/1 → skip works → stop flow works → log saved on completion → screen stays on.
 
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`.
+
 ---
 
 ## Phase 5: History
+**Branch:** `phase-5/history`
 
 **Goal:** User views past workout logs in a clear, date-grouped list.
 
@@ -109,9 +144,12 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 
 **Checkpoint:** History page shows all past workouts grouped by date. Status badges and percentages are correct. Empty state works for new users.
 
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`.
+
 ---
 
 ## Phase 6: PWA + Polish
+**Branch:** `phase-6/pwa-polish`
 
 **Goal:** Installable PWA, final mobile polish, production readiness.
 
@@ -127,6 +165,8 @@ npm install mongodb @auth/mongodb-adapter next-auth next-pwa
 | 8 | Replace placeholder `NEXTAUTH_SECRET` with a secure random value | `.env.local` + Vercel env vars |
 
 **Checkpoint:** App is installable from mobile browser. Works as standalone app. All touch targets are comfortable. Icons and splash screen appear correctly.
+
+**Review:** Push branch → test on Vercel preview URL → approve → merge to `main`. **This is the final production release.**
 
 ---
 
