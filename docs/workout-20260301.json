@@ -1,0 +1,450 @@
+{
+    "cycleLengthDays": 7,
+    "routines":[
+      {
+        "cycleDayNumber": 1,
+        "description": "Спина + Бицепс (Анти-офис)",
+        "workouts":[
+          {
+            "workoutId": "w1",
+            "name": "Спина + Бицепс",
+            "description": "Круговая тренировка для вытяжения позвоночника, укрепления кора и тонуса мышц",
+            "rounds": 3,
+            "restAfterRoundSec": 30,
+            "preparation":[
+              {
+                "name": "Суставная гимнастика (шея, плечи, кисти)",
+                "description": "Плавные круговые движения для разогрева суставов",
+                "durationSec": 90,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Вращения тазом",
+                "description": "Амплитудные движения по кругу",
+                "durationSec": 30,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Скакалка или Бой с тенью (Сет 1)",
+                "description": "Мягкие прыжки на носках или активные удары руками",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка или Бой с тенью (Сет 2)",
+                "description": "Продолжаем разогрев",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка или Бой с тенью (Сет 3)",
+                "description": "Финальный разогревочный сет",
+                "durationSec": 40,
+                "restAfterSec": 10
+              }
+            ],
+            "exercises":[
+              {
+                "name": "Подтягивания (широкий/средний хват)",
+                "description": "Если тяжело - активный вис или помощь ремня",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Ягодичный мостик",
+                "description": "Фиксация таза в верхней точке на 1 секунду",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Подтягивания обратным хватом",
+                "description": "Акцент на бицепс",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Супермен (лодочка)",
+                "description": "Пауза 2-3 секунды в верхней точке",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Планка на прямых руках",
+                "description": "Спина ровная, пресс напряжен",
+                "durationSec": 50,
+                "restAfterSec": 15
+              }
+            ],
+            "coolDown":[
+              {
+                "name": "Вис на турнике",
+                "description": "Свободный вис для вытяжения позвоночника",
+                "durationSec": 90,
+                "restAfterSec": 5
+              },
+              {
+                "name": "Растяжка спины с ремнями",
+                "description": "Сидя, вытягиваем спину с помощью ремня",
+                "durationSec": 100,
+                "restAfterSec": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cycleDayNumber": 2,
+        "description": "Кардио + Пресс",
+        "workouts":[
+          {
+            "workoutId": "w2",
+            "name": "Кардио интенсив и кор",
+            "description": "Сжигание калорий и рельеф без ударной нагрузки на колени",
+            "rounds": 3,
+            "restAfterRoundSec": 30,
+            "preparation":[
+              {
+                "name": "Суставная гимнастика",
+                "description": "Плавные движения",
+                "durationSec": 90,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Вращения тазом",
+                "description": "Амплитудные движения",
+                "durationSec": 30,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Бой с тенью (Сет 1)",
+                "description": "Разминка",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Бой с тенью (Сет 2)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Бой с тенью (Сет 3)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              }
+            ],
+            "exercises":[
+              {
+                "name": "Бой с тенью (интенсивно)",
+                "description": "Темп быстрый, активно скручиваем корпус",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Подъем ног в висе на турнике",
+                "description": "Колени к груди. Замена - подъемы ног лежа на коврике",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Велосипед",
+                "description": "Лежа на спине, медленно и подконтрольно",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Отжимания от пола (широкие)",
+                "description": "Грудь тянется к полу",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Альпинист",
+                "description": "Без прыжков, скользящим движением подтягиваем колени",
+                "durationSec": 50,
+                "restAfterSec": 15
+              }
+            ],
+            "coolDown":[
+              {
+                "name": "Поза Кобры",
+                "description": "Растяжка мышц пресса",
+                "durationSec": 90,
+                "restAfterSec": 5
+              },
+              {
+                "name": "Растяжка плеч",
+                "description": "Руку прижимаем к груди",
+                "durationSec": 100,
+                "restAfterSec": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cycleDayNumber": 3,
+        "description": "Грудь + Трицепс + Статика",
+        "workouts":[
+          {
+            "workoutId": "w3",
+            "name": "Верх тела и безопасная статика",
+            "description": "Работа над грудными мышцами и укрепление ног статической нагрузкой",
+            "rounds": 3,
+            "restAfterRoundSec": 30,
+            "preparation":[
+              {
+                "name": "Суставная гимнастика",
+                "description": "",
+                "durationSec": 90,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Вращения тазом",
+                "description": "",
+                "durationSec": 30,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Скакалка (Сет 1)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка (Сет 2)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка (Сет 3)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              }
+            ],
+            "exercises":[
+              {
+                "name": "Отжимания от пола",
+                "description": "Классическая постановка. Можно перейти на колени",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Обратные отжимания",
+                "description": "От стула/дивана. Ноги согнуты для защиты коленей",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Стульчик у стены",
+                "description": "Угол в коленях 90 градусов. Спина плотно прижата",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Русские скручивания",
+                "description": "Сидя на полу с отклоненным корпусом",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Пловец",
+                "description": "Лежа на животе, поочередный подъем разноименной руки и ноги",
+                "durationSec": 50,
+                "restAfterSec": 15
+              }
+            ],
+            "coolDown":[
+              {
+                "name": "Растяжка грудных мышц",
+                "description": "Руки в замок за спиной, сводим лопатки",
+                "durationSec": 90,
+                "restAfterSec": 5
+              },
+              {
+                "name": "Растяжка трицепса",
+                "description": "Локоть заводим за голову",
+                "durationSec": 100,
+                "restAfterSec": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cycleDayNumber": 4,
+        "description": "Глубокое восстановление и Растяжка",
+        "workouts":[
+          {
+            "workoutId": "w4",
+            "name": "Йога и растяжка",
+            "description": "Снятие напряжения со спины и улучшение гибкости. Выполняется единым потоком",
+            "rounds": 1,
+            "restAfterRoundSec": 0,
+            "preparation": [],
+            "exercises":[
+              {
+                "name": "Кошка-Корова",
+                "description": "Медленные прогибы, синхронно с дыханием",
+                "durationSec": 180,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Поза ребенка",
+                "description": "Таз на пятках, руки максимально тянутся вперед",
+                "durationSec": 120,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Собака мордой вниз",
+                "description": "Мягко переминаемся с ноги на ногу",
+                "durationSec": 120,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Растяжка бицепса бедра (Левая нога)",
+                "description": "Лежа на спине, тянем прямую ногу ремнем",
+                "durationSec": 150,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Растяжка бицепса бедра (Правая нога)",
+                "description": "Лежа на спине, тянем прямую ногу ремнем",
+                "durationSec": 150,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Скручивания позвоночника (Влево)",
+                "description": "Колени влево, взгляд вправо",
+                "durationSec": 120,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Скручивания позвоночника (Вправо)",
+                "description": "Колени вправо, взгляд влево",
+                "durationSec": 120,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Планка классическая",
+                "description": "На локтях. Тонус перед выходными",
+                "durationSec": 120,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Растяжка груди и плеч с ремнем",
+                "description": "Сидя, перекидываем ремень за спину на прямых руках",
+                "durationSec": 180,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Шавасана",
+                "description": "Полное расслабление на спине",
+                "durationSec": 240,
+                "restAfterSec": 0
+              }
+            ],
+            "coolDown":[]
+          }
+        ]
+      },
+      {
+        "cycleDayNumber": 5,
+        "description": "Фулбоди Интенсив",
+        "workouts":[
+          {
+            "workoutId": "w5",
+            "name": "Тонус всего тела",
+            "description": "Динамичная круговая тренировка для максимального тонуса перед выходными",
+            "rounds": 3,
+            "restAfterRoundSec": 30,
+            "preparation":[
+              {
+                "name": "Суставная гимнастика",
+                "description": "Разогрев сверху вниз",
+                "durationSec": 90,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Вращения тазом",
+                "description": "",
+                "durationSec": 30,
+                "restAfterSec": 0
+              },
+              {
+                "name": "Скакалка (Сет 1)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка (Сет 2)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              },
+              {
+                "name": "Скакалка (Сет 3)",
+                "description": "",
+                "durationSec": 40,
+                "restAfterSec": 10
+              }
+            ],
+            "exercises":[
+              {
+                "name": "Скакалка",
+                "description": "Мягко, разгоняем пульс",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Подтягивания",
+                "description": "Любым удобным хватом",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Приседания Плие",
+                "description": "Широкая постановка ног, не ниже параллели, бережем колени",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Отжимания с касанием плеча",
+                "description": "В верхней точке касаемся противоположного плеча",
+                "durationSec": 50,
+                "restAfterSec": 15
+              },
+              {
+                "name": "Мертвый жук",
+                "description": "Поясница плотно прижата к полу. Работаем прессом",
+                "durationSec": 50,
+                "restAfterSec": 15
+              }
+            ],
+            "coolDown":[
+              {
+                "name": "Глубокая растяжка всего тела",
+                "description": "Свободная растяжка уставших мышц, восстановление дыхания",
+                "durationSec": 195,
+                "restAfterSec": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cycleDayNumber": 6,
+        "description": "Отдых и восстановление",
+        "workouts":[]
+      },
+      {
+        "cycleDayNumber": 6,
+        "description": "Отдых и восстановление",
+        "workouts":[]
+      }
+    ]
+}

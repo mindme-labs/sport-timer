@@ -49,7 +49,7 @@ export default function InstallPrompt() {
   return (
     <div className="mx-4 mb-4 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3">
       <div className="flex-1">
-        <p className="text-sm font-medium">Install Sport Timer</p>
+        <p className="text-sm font-medium">Install TimeToTrain</p>
         <p className="text-xs text-muted-foreground">
           Add to your home screen for the best experience
         </p>
