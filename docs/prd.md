@@ -1,9 +1,9 @@
 # Product Requirements Document (PRD)
-**Project Name:** Sport Timer (Progressive Web App)
-**Platform:** Mobile-first Web Application (Next.js 14 App Router, deployed on Vercel)
+**Project Name:** TimeToTrain (Progressive Web App)
+**Platform:** Mobile-first Web Application (Next.js 16 App Router, deployed on Vercel)
 
 ## 1. Project Overview
-"Sport Timer" is a mobile-first Progressive Web Application (PWA) designed to automate interval and circuit workouts. The app manages flexible cyclical workout programs, tracks real-time progress, prevents the mobile screen from turning off during active workouts, and logs highly detailed execution statistics for future analytics.
+"TimeToTrain" is a mobile-first Progressive Web Application (PWA) designed to automate interval and circuit workouts. The app manages flexible cyclical workout programs, tracks real-time progress, prevents the mobile screen from turning off during active workouts, and logs highly detailed execution statistics for future analytics.
 
 ## 2. Core Features & User Flow
 
@@ -15,15 +15,35 @@
 
 ### 2.2. Flexible Cyclical Workout Programs
 *   **Custom Cycle Length:** Users can define a cycle of any length (e.g., a 7-day cycle, a 10-day cycle, or a 14-day cycle).
+*   **Day Descriptions:** Each day in the cycle can have an optional `description` text field. This lets the user annotate what the day's focus is (e.g., "Upper body + core focus", "Active recovery — light stretching"). The description is shown on the dashboard next to the day heading.
 *   **Days Setup & Rest Days:** For each day in the cycle (Day 1 to Day X), the user can assign a workout. If no workout is assigned to a specific day (e.g., Day 6 and Day 7), the system automatically treats it as a "Day Off / Rest Day".
 *   **Auto-Tracking:** The app dynamically calculates what "Day" of the cycle the user is currently on. Formula: `(Current Date - Program Start Date + skipDayOffset) % Cycle Length`. The `skipDayOffset` is an integer stored on the program document, initialized to `0`, and incremented by `1` each time the user skips a training day. This preserves the original `startDate` for history context while allowing the cycle to advance.
 *   **Multiple Workouts:** A single active day within the cycle can contain multiple distinct workouts (e.g., "Morning Cardio" and "Evening Core").
 
-### 2.3. Daily Dashboard (`/dashboard`)
-*   **Today's Plan:** Automatically displays the workouts scheduled for the current cycle day. If it's a rest day, it displays a friendly "Today is your Day Off!" message.
-*   **Manual Override:** Users can click a button to mark a specific workout as "Completed" for the day without having to run the timer.
-*   **Skip Training Day:** Users can tap a "Skip Day" button on the dashboard. A confirmation prompt appears: *"Skip today's training? The cycle will advance to the next day."* On confirmation, the program's `skipDayOffset` is incremented by `1`, effectively advancing the cycle. The skipped day is logged in the workout history with a `skipped` status.
-*   **Action:** A giant "Start Workout" button initiates the active timer engine for the selected routine.
+### 2.3. Cycle Dashboard (`/dashboard`)
+*   **Full Cycle Overview:** The dashboard shows the entire current cycle, not just today. A horizontal scrollable row of day pills (Day 1, Day 2, ..., Day N) appears at the top. Each pill has a colored status dot:
+    *   **Green dot** = all workouts for that day are completed.
+    *   **Amber dot** = some but not all workouts done.
+    *   **Red dot** = past day with no workouts done (missed).
+    *   **Gray dot** = rest day.
+    *   **No dot / dimmed** = future day.
+    *   **Today** is distinguished with a special indicator.
+*   **Day Selection:** Tapping any day pill selects it and displays that day's workouts below. This lets the user go back to a previous day or look ahead at upcoming days.
+*   **Selected Day Content:** Shows the day number, description (if set), and workout cards with exercises. Users can start, restart, or mark complete any workout for the selected day.
+*   **Manual Override:** Users can click a button to mark a specific workout as "Completed" without running the timer.
+*   **Skip Training Day:** Only shown when viewing today. A confirmation prompt appears: *"Skip today's training? The cycle will advance to the next day."* On confirmation, the program's `skipDayOffset` is incremented by `1`.
+*   **Restart Workout:** Even if a workout has been completed or abandoned, the user can tap "Restart" on that workout card. The new result replaces the previous log entry for that workout + date.
+*   **Complete Cycle:** A "Complete Cycle & Start Fresh" button resets the cycle to Day 1. A confirmation prompt appears: *"Reset the cycle to Day 1? Your history is preserved."* On confirm, `skipDayOffset` is adjusted so the cycle restarts. All previous history is preserved.
+
+### 2.3a. Pre-Workout Detail Screen (`/workout/[id]`)
+*   **Workout Preview:** Before the timer starts, the user sees a detail screen showing:
+    *   Workout name (large heading).
+    *   Workout description (if set) — a block of text explaining the focus, goals, or notes.
+    *   Summary stats: number of rounds, number of exercises, estimated total time.
+    *   Rest between rounds value.
+    *   Full exercise list, each showing: name, description (if set), duration, and rest-after time.
+*   **Start Button:** A large "Start Workout" button at the bottom launches the countdown timer.
+*   **Back Navigation:** A back arrow returns to the dashboard.
 
 ### 2.4. Workout Execution Engine (The Timer - `/workout/[id]`)
 *   **Structure Execution:** The timer strictly follows the hierarchy: `Workout` -> `Rounds` -> `List of Exercises` -> `Duration (seconds)`.
@@ -35,7 +55,8 @@
 *   **Audio Cues:** Web Audio API (or `<audio>` tags) plays short "beeps" at 3, 2, and 1 seconds remaining, and a longer beep on exercise switch.
 *   **Screen Wake Lock (CRITICAL):** While the timer is active, the app MUST use `navigator.wakeLock.request('screen')` to prevent the phone from dimming or locking. This lock is released when the workout ends or the component unmounts. If the browser does not support the Wake Lock API, display a persistent warning banner: *"Your browser doesn't support screen wake lock. Please keep your screen on manually."*
 *   **Controls:** The screen features "Pause/Resume", "Skip Exercise", and "Stop" buttons.
-*   **Skip Exercise:** The user can tap "Skip Exercise" to immediately stop the current exercise timer and advance to the next exercise in the round (skipping any rest period for the skipped exercise). If the skipped exercise is the last in the current round, the timer advances to the first exercise of the next round (or ends if it was the final round). The skip is recorded in the action log. A brief visual flash animation confirms the skip action.
+*   **Exercise Descriptions:** Each exercise can have an optional `description` text field. This lets the user document form cues, technique notes, or equipment info (e.g., "Keep elbows tucked, 2-second hold at top", "Use 12kg kettlebell"). The description is shown below the exercise name during the active timer and on the dashboard exercise list.
+*   **Skip Exercise (with Partial Progress):** The user can tap "Skip Exercise" to immediately stop the current exercise timer and advance to the next exercise in the round (skipping any rest period for the skipped exercise). If the skipped exercise is the last in the current round, the timer advances to the first exercise of the next round (or ends if it was the final round). The skip is recorded in the action log. A brief visual flash animation confirms the skip action. **Partial progress rule:** If the user has been performing the exercise for **5 seconds or more** before skipping, that elapsed time is credited to `totalCompletedSec` and stored as `timeSpentSec` on the skipped exercise entry. If under 5 seconds, zero time is credited (same as before). This partial progress is visible in the workout history detail.
 *   **Stop Workout (Unified Flow):** When the user taps "Stop", a modal appears with three options:
     *   **"Save & Finish"** — saves the session with progress achieved so far (status: `finished_early`). No further confirmation needed.
     *   **"Discard"** — discards the session entirely. Requires a second confirmation: *"Are you sure? This workout will not be saved."*
@@ -52,7 +73,7 @@
 *   **Progress Indicator:** During a workout, display a compact progress bar or indicator showing: current round / total rounds, current exercise / total exercises.
 
 ### 2.6. Tracking, Logging & History (`/history`)
-*   **Completion Percentage:** The system calculates completion as: `(total planned time - skipped exercise time) / total planned time * 100`. Skipped exercises count as **zero** time completed — they reduce the numerator but the denominator (total planned time) stays the same. Example: 300s total, 50s exercise skipped → `(300 - 50) / 300 = 83.3%`. Paused time does not affect the calculation.
+*   **Completion Percentage:** The system calculates completion as: `totalCompletedSec / totalPlannedSec * 100`. Fully completed exercises contribute their full `durationSec`. Skipped exercises contribute their `timeSpentSec` if ≥ 5 seconds, or 0 otherwise. The denominator (`totalPlannedSec`) always stays the same. Paused time does not affect the calculation.
 *   **Action Logging:** Every interaction during the workout engine is logged into an array (e.g., `started at 10:00`, `paused at 10:05`, `resumed at 10:06`, `skipped_exercise at 10:08`, `finished at 10:10`, `stopped_early at 10:10`). This ensures rich data for future statistics updates. Skipped exercises and skipped training days are also captured to provide a complete picture of adherence.
 *   **History View:** A reverse-chronological list view grouped by date. Each entry shows: date, workout name, status badge (completed / finished early / skipped / partially completed), and completion percentage. The empty state for new users displays a motivational message: *"No workouts yet. Start your first session!"*
 
@@ -92,21 +113,24 @@ The database uses **MongoDB Atlas** provisioned through **Vercel's native integr
   "routines": [
     {
       "cycleDayNumber": 1,
+      "description": "Upper body + core focus (optional)",
       "workouts": [
         {
           "workoutId": "w1",
           "name": "Upper Body Strength",
+          "description": "Focus on controlled reps, 2-second holds (optional)",
           "rounds": 3,
           "restAfterRoundSec": 60,
           "exercises": [
-            { "name": "Pushups", "durationSec": 50, "restAfterSec": 10 },
-            { "name": "Pullups", "durationSec": 50, "restAfterSec": 10 }
+            { "name": "Pushups", "durationSec": 50, "restAfterSec": 10, "description": "Keep elbows tucked (optional)" },
+            { "name": "Pullups", "durationSec": 50, "restAfterSec": 10, "description": "" }
           ]
         }
       ]
     },
     {
       "cycleDayNumber": 2,
+      "description": "",
       "workouts": []
     }
   ]
@@ -129,7 +153,7 @@ The database uses **MongoDB Atlas** provisioned through **Vercel's native integr
   "totalCompletedSec": 250,
   "completionPercentage": 83.3,
   "skippedExercises": [
-    { "round": 2, "exerciseName": "Pullups", "durationSec": 50, "timestamp": "ISO_STRING" }
+    { "round": 2, "exerciseName": "Pullups", "durationSec": 50, "timeSpentSec": 12, "timestamp": "ISO_STRING" }
   ],
   "actionLogs": [
     { "timestamp": "ISO_STRING", "action": "started" },
@@ -144,7 +168,7 @@ The database uses **MongoDB Atlas** provisioned through **Vercel's native integr
 ## 4. Technical Architecture Requirements
 
 ### 4.1. Framework & Authentication
-*   **Next.js 14 App Router** with the `/app` directory structure. Deployed on **Vercel**.
+*   **Next.js 16 App Router** with the `/app` directory structure. Deployed on **Vercel**.
 *   **NextAuth.js** for Google OAuth with the **MongoDB Adapter** (`@auth/mongodb-adapter`). NextAuth handles user creation, session storage, and account linking directly in MongoDB — no separate auth service needed. A client-side `SessionProvider` wrapper component is required for App Router compatibility. Server Components cannot use `useSession()` directly — use `getServerSession()` for server-side auth checks, and `useSession()` only in Client Components.
 *   **MongoDB Node.js driver** (`mongodb`) is used for all database operations. A shared `MongoClient` singleton (cached in `globalThis` during development to survive HMR) connects to MongoDB Atlas. The `MONGODB_URI` environment variable is auto-injected by Vercel in deployed environments; for local development, it must be copied to `.env.local`.
 
@@ -169,9 +193,17 @@ The database uses **MongoDB Atlas** provisioned through **Vercel's native integr
 *   **Workout Engine:** Client Component. Workout data is passed as props from a Server Component parent, or fetched client-side on mount. All timer logic runs entirely on the client.
 *   **Writes (logging, status updates):** Performed via Next.js Server Actions or API Route Handlers that use the `mongodb` driver.
 
+### 2.8. Preparation & Cool Down Phases
+*   **Preparation (Warm-Up):** Each workout can optionally define a `preparation` array of exercises. These run **once** at the very beginning, before Round 1 of the main exercises. The timer shows "Preparation" as the section label with a teal background.
+*   **Cool Down:** Each workout can optionally define a `coolDown` array of exercises. These run **once** after the final round completes. The timer shows "Cool Down" as the section label with an indigo background.
+*   **Timer Flow:** `Preparation (1 pass) → Main Rounds (1..N) → Cool Down (1 pass) → Completed`. If either phase is empty, it is skipped.
+*   **Exercise Structure:** Preparation and cool-down exercises use the same structure as main exercises: name, description, duration, rest-after. Rest between exercises works identically.
+*   **Planned Time:** `totalPlannedSec` includes preparation + main rounds + cool-down exercise durations.
+*   **Program Form:** Each workout card in the program editor has collapsible "Preparation" and "Cool Down" sections for managing these exercises.
+*   **Pre-Workout Screen:** Shows preparation and cool-down exercise lists alongside the main exercises.
+
 ## 5. Future Backlog
 
 The following features are out of scope for the initial release but planned for future iterations:
 
-*   **Warm-Up & Cool-Down Phases:** Support dedicated warm-up and cool-down phases within a workout that sit outside the round structure (e.g., 5-minute warm-up before Round 1, 3-minute stretch after the final round).
 *   **Offline Support:** Full offline capability via service worker caching of workout data. Users can start and complete workouts without connectivity. Action logs and completion data are queued locally and synced to MongoDB when connectivity returns (using a background sync strategy).
