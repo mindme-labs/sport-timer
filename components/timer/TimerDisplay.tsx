@@ -7,8 +7,8 @@ import { useWakeLock } from "@/hooks/useWakeLock";
 import { useAudioCues } from "@/hooks/useAudioCues";
 import StopModal from "./StopModal";
 import WakeLockBanner from "./WakeLockBanner";
-import type { Workout } from "@/lib/types";
-import type { TimerPhase } from "@/hooks/useTimerReducer";
+import type { Workout, Exercise } from "@/lib/types";
+import type { TimerPhase, TimerSection } from "@/hooks/useTimerReducer";
 
 interface TimerDisplayProps {
   workout: Workout;
@@ -30,8 +30,12 @@ function formatTime(seconds: number): string {
   return m > 0 ? `${m}:${s.toString().padStart(2, "0")}` : `${s}`;
 }
 
-function getBackgroundClass(phase: TimerPhase, showStopModal: boolean): string {
+function getBackgroundClass(phase: TimerPhase, section: TimerSection, showStopModal: boolean): string {
   if (showStopModal) return "bg-red-600";
+  if (section === "preparation" && (phase === "exercising" || phase === "paused"))
+    return "bg-teal-600";
+  if (section === "coolDown" && (phase === "exercising" || phase === "paused"))
+    return "bg-indigo-600";
   switch (phase) {
     case "exercising":
       return "bg-emerald-600";
@@ -45,6 +49,18 @@ function getBackgroundClass(phase: TimerPhase, showStopModal: boolean): string {
     default:
       return "bg-background";
   }
+}
+
+function getExercisesForSection(workout: Workout, section: TimerSection): Exercise[] {
+  if (section === "preparation") return workout.preparation ?? [];
+  if (section === "coolDown") return workout.coolDown ?? [];
+  return workout.exercises;
+}
+
+function getSectionLabel(section: TimerSection): string {
+  if (section === "preparation") return "Preparation";
+  if (section === "coolDown") return "Cool Down";
+  return "";
 }
 
 export default function TimerDisplay({
@@ -107,14 +123,9 @@ export default function TimerDisplay({
     if (saving) return;
     setSaving(true);
 
-    const skippedTime = state.skippedExercises.reduce(
-      (sum, e) => sum + e.durationSec,
-      0
-    );
-
     let status: "completed" | "finished_early" | "discarded";
     if (state.phase === "completed") {
-      status = state.skippedExercises.length > 0 ? "completed" : "completed";
+      status = "completed";
     } else {
       const lastAction = state.actionLogs[state.actionLogs.length - 1];
       status = lastAction?.action === "discarded" ? "discarded" : "finished_early";
@@ -127,11 +138,7 @@ export default function TimerDisplay({
 
     const completionPercentage =
       state.totalPlannedSec > 0
-        ? Math.round(
-            ((state.totalCompletedSec) /
-              state.totalPlannedSec) *
-              1000
-          ) / 10
+        ? Math.round((state.totalCompletedSec / state.totalPlannedSec) * 1000) / 10
         : 100;
 
     try {
@@ -184,19 +191,26 @@ export default function TimerDisplay({
     );
   }
 
-  const exercises = workout.exercises;
+  const section = state.section;
+  const exercises = getExercisesForSection(workout, section);
   const currentExercise = exercises[state.currentExercise];
   const nextExIdx = state.currentExercise + 1;
   const nextExerciseName =
     nextExIdx < exercises.length
       ? exercises[nextExIdx].name
-      : state.currentRound + 1 < workout.rounds
+      : section === "main" && state.currentRound + 1 < workout.rounds
         ? exercises[0].name
         : null;
 
   const isResting = state.phase === "resting" || state.phase === "roundResting";
   const isPaused = state.phase === "paused";
-  const bgClass = getBackgroundClass(state.phase, showStopModal);
+  const bgClass = getBackgroundClass(state.phase, section, showStopModal);
+  const sectionLabel = getSectionLabel(section);
+
+  const progressPercent =
+    state.totalPlannedSec > 0
+      ? (state.totalCompletedSec / state.totalPlannedSec) * 100
+      : 0;
 
   return (
     <div
@@ -208,7 +222,7 @@ export default function TimerDisplay({
 
       <div className="flex items-center justify-between px-4 pt-4 text-white/80">
         <div className="text-sm font-medium">
-          Round {state.currentRound + 1}/{workout.rounds}
+          {sectionLabel || `Round ${state.currentRound + 1}/${workout.rounds}`}
         </div>
         <div className="text-sm font-medium">
           Exercise {state.currentExercise + 1}/{exercises.length}
@@ -219,14 +233,7 @@ export default function TimerDisplay({
         <div className="h-1.5 overflow-hidden rounded-full bg-white/20">
           <div
             className="h-full rounded-full bg-white/60 transition-all duration-300"
-            style={{
-              width: `${
-                ((state.currentRound * exercises.length +
-                  state.currentExercise) /
-                  (workout.rounds * exercises.length)) *
-                100
-              }%`,
-            }}
+            style={{ width: `${Math.min(progressPercent, 100)}%` }}
           />
         </div>
       </div>

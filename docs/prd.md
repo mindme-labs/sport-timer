@@ -193,9 +193,17 @@ The database uses **MongoDB Atlas** provisioned through **Vercel's native integr
 *   **Workout Engine:** Client Component. Workout data is passed as props from a Server Component parent, or fetched client-side on mount. All timer logic runs entirely on the client.
 *   **Writes (logging, status updates):** Performed via Next.js Server Actions or API Route Handlers that use the `mongodb` driver.
 
+### 2.8. Preparation & Cool Down Phases
+*   **Preparation (Warm-Up):** Each workout can optionally define a `preparation` array of exercises. These run **once** at the very beginning, before Round 1 of the main exercises. The timer shows "Preparation" as the section label with a teal background.
+*   **Cool Down:** Each workout can optionally define a `coolDown` array of exercises. These run **once** after the final round completes. The timer shows "Cool Down" as the section label with an indigo background.
+*   **Timer Flow:** `Preparation (1 pass) → Main Rounds (1..N) → Cool Down (1 pass) → Completed`. If either phase is empty, it is skipped.
+*   **Exercise Structure:** Preparation and cool-down exercises use the same structure as main exercises: name, description, duration, rest-after. Rest between exercises works identically.
+*   **Planned Time:** `totalPlannedSec` includes preparation + main rounds + cool-down exercise durations.
+*   **Program Form:** Each workout card in the program editor has collapsible "Preparation" and "Cool Down" sections for managing these exercises.
+*   **Pre-Workout Screen:** Shows preparation and cool-down exercise lists alongside the main exercises.
+
 ## 5. Future Backlog
 
 The following features are out of scope for the initial release but planned for future iterations:
 
-*   **Warm-Up & Cool-Down Phases:** Support dedicated warm-up and cool-down phases within a workout that sit outside the round structure (e.g., 5-minute warm-up before Round 1, 3-minute stretch after the final round).
 *   **Offline Support:** Full offline capability via service worker caching of workout data. Users can start and complete workouts without connectivity. Action logs and completion data are queued locally and synced to MongoDB when connectivity returns (using a background sync strategy).

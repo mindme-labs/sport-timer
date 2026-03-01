@@ -13,7 +13,9 @@ export interface Workout {
   description?: string;
   rounds: number;
   restAfterRoundSec: number;
+  preparation?: Exercise[];
   exercises: Exercise[];
+  coolDown?: Exercise[];
 }
 
 export interface Routine {

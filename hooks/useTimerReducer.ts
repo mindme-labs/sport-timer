@@ -1,4 +1,4 @@
-import type { Workout, ActionLog, SkippedExercise } from "@/lib/types";
+import type { Workout, Exercise, ActionLog, SkippedExercise } from "@/lib/types";
 
 export type TimerPhase =
   | "idle"
@@ -9,8 +9,11 @@ export type TimerPhase =
   | "completed"
   | "stopped";
 
+export type TimerSection = "preparation" | "main" | "coolDown";
+
 export interface TimerState {
   phase: TimerPhase;
+  section: TimerSection;
   pausedFrom: "exercising" | "resting" | "roundResting" | null;
   currentRound: number;
   currentExercise: number;
@@ -32,19 +35,71 @@ export type TimerAction =
   | { type: "COMPLETE" };
 
 function calcTotalPlannedSec(workout: Workout): number {
-  return (
-    workout.exercises.reduce((sum, e) => sum + e.durationSec, 0) *
-    workout.rounds
-  );
+  const prepTime = (workout.preparation ?? []).reduce((s, e) => s + e.durationSec, 0);
+  const mainTime = workout.exercises.reduce((s, e) => s + e.durationSec, 0) * workout.rounds;
+  const coolTime = (workout.coolDown ?? []).reduce((s, e) => s + e.durationSec, 0);
+  return prepTime + mainTime + coolTime;
 }
 
 function now(): string {
   return new Date().toISOString();
 }
 
+function getExercisesForSection(workout: Workout, section: TimerSection): Exercise[] {
+  if (section === "preparation") return workout.preparation ?? [];
+  if (section === "coolDown") return workout.coolDown ?? [];
+  return workout.exercises;
+}
+
+function sectionLabel(section: TimerSection): string {
+  if (section === "preparation") return "Preparation";
+  if (section === "coolDown") return "Cool Down";
+  return "";
+}
+
+function transitionToNextSection(state: TimerState): TimerState {
+  const workout = state.workout!;
+
+  if (state.section === "preparation") {
+    const log: ActionLog = { timestamp: now(), action: "preparation_complete" };
+    return {
+      ...state,
+      section: "main",
+      currentRound: 0,
+      currentExercise: 0,
+      phase: "exercising",
+      secondsRemaining: workout.exercises[0].durationSec,
+      actionLogs: [...state.actionLogs, log],
+    };
+  }
+
+  if (state.section === "main") {
+    const coolDown = workout.coolDown ?? [];
+    if (coolDown.length > 0) {
+      const log: ActionLog = { timestamp: now(), action: "cooldown_started" };
+      return {
+        ...state,
+        section: "coolDown",
+        currentRound: 0,
+        currentExercise: 0,
+        phase: "exercising",
+        secondsRemaining: coolDown[0].durationSec,
+        actionLogs: [...state.actionLogs, log],
+      };
+    }
+  }
+
+  return {
+    ...state,
+    phase: "completed",
+    secondsRemaining: 0,
+    actionLogs: [...state.actionLogs, { timestamp: now(), action: "finished" }],
+  };
+}
+
 function advanceExercise(state: TimerState): TimerState {
   const workout = state.workout!;
-  const exercises = workout.exercises;
+  const exercises = getExercisesForSection(workout, state.section);
   const nextExIdx = state.currentExercise + 1;
 
   if (nextExIdx < exercises.length) {
@@ -56,30 +111,27 @@ function advanceExercise(state: TimerState): TimerState {
     };
   }
 
-  const nextRound = state.currentRound + 1;
-  if (nextRound < workout.rounds) {
-    if (workout.restAfterRoundSec > 0) {
+  if (state.section === "main") {
+    const nextRound = state.currentRound + 1;
+    if (nextRound < workout.rounds) {
+      if (workout.restAfterRoundSec > 0) {
+        return {
+          ...state,
+          phase: "roundResting",
+          secondsRemaining: workout.restAfterRoundSec,
+        };
+      }
       return {
         ...state,
-        phase: "roundResting",
-        secondsRemaining: workout.restAfterRoundSec,
+        phase: "exercising",
+        currentRound: nextRound,
+        currentExercise: 0,
+        secondsRemaining: workout.exercises[0].durationSec,
       };
     }
-    return {
-      ...state,
-      phase: "exercising",
-      currentRound: nextRound,
-      currentExercise: 0,
-      secondsRemaining: exercises[0].durationSec,
-    };
   }
 
-  return {
-    ...state,
-    phase: "completed",
-    secondsRemaining: 0,
-    actionLogs: [...state.actionLogs, { timestamp: now(), action: "finished" }],
-  };
+  return transitionToNextSection(state);
 }
 
 function advanceRound(state: TimerState): TimerState {
@@ -94,6 +146,12 @@ function advanceRound(state: TimerState): TimerState {
   };
 }
 
+function getFirstSection(workout: Workout): { section: TimerSection; exercises: Exercise[] } {
+  const prep = workout.preparation ?? [];
+  if (prep.length > 0) return { section: "preparation", exercises: prep };
+  return { section: "main", exercises: workout.exercises };
+}
+
 export function timerReducer(
   state: TimerState,
   action: TimerAction
@@ -101,12 +159,14 @@ export function timerReducer(
   switch (action.type) {
     case "START": {
       const workout = action.workout;
+      const { section, exercises } = getFirstSection(workout);
       return {
         phase: "exercising",
+        section,
         pausedFrom: null,
         currentRound: 0,
         currentExercise: 0,
-        secondsRemaining: workout.exercises[0].durationSec,
+        secondsRemaining: exercises[0].durationSec,
         actionLogs: [{ timestamp: now(), action: "started" }],
         skippedExercises: [],
         totalCompletedSec: 0,
@@ -131,7 +191,8 @@ export function timerReducer(
       }
 
       if (state.phase === "exercising") {
-        const exercise = state.workout!.exercises[state.currentExercise];
+        const exercises = getExercisesForSection(state.workout!, state.section);
+        const exercise = exercises[state.currentExercise];
         const updatedState = {
           ...state,
           totalCompletedSec: state.totalCompletedSec + exercise.durationSec,
@@ -197,7 +258,8 @@ export function timerReducer(
       }
 
       const workout = state.workout!;
-      const exercise = workout.exercises[state.currentExercise];
+      const exercises = getExercisesForSection(workout, state.section);
+      const exercise = exercises[state.currentExercise];
 
       const timeSpentSec =
         state.phase === "resting"
@@ -205,8 +267,11 @@ export function timerReducer(
           : exercise.durationSec - state.secondsRemaining;
       const creditedTime = timeSpentSec >= 5 ? timeSpentSec : 0;
 
+      const label = sectionLabel(state.section);
+      const roundLabel = state.section === "main" ? `Round ${state.currentRound + 1}` : label;
+
       const skippedEntry: SkippedExercise = {
-        round: state.currentRound + 1,
+        round: state.section === "main" ? state.currentRound + 1 : 0,
         exerciseName: exercise.name,
         durationSec: exercise.durationSec,
         timeSpentSec,
@@ -223,48 +288,42 @@ export function timerReducer(
           {
             timestamp: now(),
             action: "skipped_exercise",
-            detail: `${exercise.name} (Round ${state.currentRound + 1})${timeSpentSec >= 5 ? ` — ${timeSpentSec}s credited` : ""}`,
+            detail: `${exercise.name} (${roundLabel})${timeSpentSec >= 5 ? ` — ${timeSpentSec}s credited` : ""}`,
           },
         ],
       };
 
       const nextExIdx = state.currentExercise + 1;
-      if (nextExIdx < workout.exercises.length) {
+      if (nextExIdx < exercises.length) {
         return {
           ...updatedState,
           phase: "exercising",
           currentExercise: nextExIdx,
-          secondsRemaining: workout.exercises[nextExIdx].durationSec,
+          secondsRemaining: exercises[nextExIdx].durationSec,
         };
       }
 
-      const nextRound = state.currentRound + 1;
-      if (nextRound < workout.rounds) {
-        if (workout.restAfterRoundSec > 0) {
+      if (state.section === "main") {
+        const nextRound = state.currentRound + 1;
+        if (nextRound < workout.rounds) {
+          if (workout.restAfterRoundSec > 0) {
+            return {
+              ...updatedState,
+              phase: "roundResting",
+              secondsRemaining: workout.restAfterRoundSec,
+            };
+          }
           return {
             ...updatedState,
-            phase: "roundResting",
-            secondsRemaining: workout.restAfterRoundSec,
+            phase: "exercising",
+            currentRound: nextRound,
+            currentExercise: 0,
+            secondsRemaining: workout.exercises[0].durationSec,
           };
         }
-        return {
-          ...updatedState,
-          phase: "exercising",
-          currentRound: nextRound,
-          currentExercise: 0,
-          secondsRemaining: workout.exercises[0].durationSec,
-        };
       }
 
-      return {
-        ...updatedState,
-        phase: "completed",
-        secondsRemaining: 0,
-        actionLogs: [
-          ...updatedState.actionLogs,
-          { timestamp: now(), action: "finished" },
-        ],
-      };
+      return transitionToNextSection(updatedState);
     }
 
     case "STOP": {
@@ -302,6 +361,7 @@ export function timerReducer(
 
 export const initialTimerState: TimerState = {
   phase: "idle",
+  section: "main",
   pausedFrom: null,
   currentRound: 0,
   currentExercise: 0,

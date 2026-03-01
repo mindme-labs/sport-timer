@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import TimerDisplay from "@/components/timer/TimerDisplay";
 import { saveWorkoutLogAction } from "./actions";
-import type { Workout } from "@/lib/types";
+import type { Workout, Exercise } from "@/lib/types";
 
 interface WorkoutRunnerProps {
   workout: Workout;
@@ -45,14 +45,16 @@ export default function WorkoutRunner({
     );
   }
 
-  const totalExerciseTime =
-    workout.exercises.reduce((sum, e) => sum + e.durationSec, 0) *
-    workout.rounds;
-  const totalRestTime =
-    workout.exercises.reduce((sum, e) => sum + e.restAfterSec, 0) *
-    workout.rounds +
+  const prep = workout.preparation ?? [];
+  const cool = workout.coolDown ?? [];
+  const prepTime = prep.reduce((s, e) => s + e.durationSec + e.restAfterSec, 0);
+  const coolTime = cool.reduce((s, e) => s + e.durationSec + e.restAfterSec, 0);
+  const mainExerciseTime =
+    workout.exercises.reduce((sum, e) => sum + e.durationSec, 0) * workout.rounds;
+  const mainRestTime =
+    workout.exercises.reduce((sum, e) => sum + e.restAfterSec, 0) * workout.rounds +
     workout.restAfterRoundSec * (workout.rounds - 1);
-  const totalTime = totalExerciseTime + totalRestTime;
+  const totalTime = prepTime + mainExerciseTime + mainRestTime + coolTime;
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -102,36 +104,28 @@ export default function WorkoutRunner({
           </p>
         )}
 
-        <h2 className="mb-3 mt-6 text-sm font-semibold text-muted-foreground">
-          Exercises per round
-        </h2>
+        {prep.length > 0 && (
+          <>
+            <h2 className="mb-3 mt-6 text-sm font-semibold text-teal-600 dark:text-teal-400">
+              Preparation
+            </h2>
+            <ExercisePreviewList exercises={prep} />
+          </>
+        )}
 
-        <div className="flex flex-col gap-2">
-          {workout.exercises.map((exercise, i) => (
-            <div
-              key={i}
-              className="rounded-xl border border-border p-3"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{exercise.name}</span>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatDuration(exercise.durationSec)}</span>
-                  {exercise.restAfterSec > 0 && (
-                    <>
-                      <span className="text-border">|</span>
-                      <span>{exercise.restAfterSec}s rest</span>
-                    </>
-                  )}
-                </div>
-              </div>
-              {exercise.description && (
-                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                  {exercise.description}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+        <h2 className="mb-3 mt-6 text-sm font-semibold text-muted-foreground">
+          Main Exercises{workout.rounds > 1 ? ` (×${workout.rounds} rounds)` : ""}
+        </h2>
+        <ExercisePreviewList exercises={workout.exercises} />
+
+        {cool.length > 0 && (
+          <>
+            <h2 className="mb-3 mt-6 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+              Cool Down
+            </h2>
+            <ExercisePreviewList exercises={cool} />
+          </>
+        )}
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 px-4 pb-8 pt-4 backdrop-blur-sm">
@@ -142,6 +136,34 @@ export default function WorkoutRunner({
           Start Workout
         </button>
       </div>
+    </div>
+  );
+}
+
+function ExercisePreviewList({ exercises }: { exercises: Exercise[] }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {exercises.map((exercise, i) => (
+        <div key={i} className="rounded-xl border border-border p-3">
+          <div className="flex items-center justify-between">
+            <span className="font-medium">{exercise.name}</span>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{formatDuration(exercise.durationSec)}</span>
+              {exercise.restAfterSec > 0 && (
+                <>
+                  <span className="text-border">|</span>
+                  <span>{exercise.restAfterSec}s rest</span>
+                </>
+              )}
+            </div>
+          </div>
+          {exercise.description && (
+            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+              {exercise.description}
+            </p>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
