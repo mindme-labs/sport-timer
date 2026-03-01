@@ -10,14 +10,28 @@ interface BeforeInstallPromptEvent extends Event {
 export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
+  const [showIosHint, setShowIosHint] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const stored = localStorage.getItem("pwa-install-dismissed");
-    if (stored) {
+    if (localStorage.getItem("pwa-install-dismissed")) {
       setDismissed(true);
+      return;
+    }
+
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as any).standalone;
+    if (isStandalone) return;
+
+    const isIos =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      !(window as any).MSStream;
+
+    if (isIos) {
+      setShowIosHint(true);
       return;
     }
 
@@ -30,7 +44,8 @@ export default function InstallPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  if (!deferredPrompt || dismissed) return null;
+  if (dismissed) return null;
+  if (!deferredPrompt && !showIosHint) return null;
 
   async function handleInstall() {
     if (!deferredPrompt) return;
@@ -47,19 +62,23 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div className="mx-4 mb-4 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3">
+    <div className="mb-4 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3">
       <div className="flex-1">
         <p className="text-sm font-medium">Install TimeToTrain</p>
         <p className="text-xs text-muted-foreground">
-          Add to your home screen for the best experience
+          {showIosHint
+            ? "Tap Share ⎋ then \"Add to Home Screen\""
+            : "Add to your home screen for the best experience"}
         </p>
       </div>
-      <button
-        onClick={handleInstall}
-        className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground active:opacity-80"
-      >
-        Install
-      </button>
+      {deferredPrompt && (
+        <button
+          onClick={handleInstall}
+          className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground active:opacity-80"
+        >
+          Install
+        </button>
+      )}
       <button
         onClick={handleDismiss}
         className="text-muted-foreground active:text-foreground"
