@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import TimerDisplay from "@/components/timer/TimerDisplay";
+import { useAudioCues } from "@/hooks/useAudioCues";
 import { saveWorkoutLogAction } from "./actions";
 import type { Workout, Exercise } from "@/lib/types";
 
@@ -25,6 +26,7 @@ export default function WorkoutRunner({
   cycleDay,
 }: WorkoutRunnerProps) {
   const [started, setStarted] = useState(false);
+  const { initAudio } = useAudioCues();
 
   if (started) {
     return (
@@ -130,7 +132,7 @@ export default function WorkoutRunner({
 
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 px-4 pb-8 pt-4 backdrop-blur-sm">
         <button
-          onClick={() => setStarted(true)}
+          onClick={() => { initAudio(); setStarted(true); }}
           className="w-full rounded-2xl bg-primary py-4 text-xl font-bold text-primary-foreground active:opacity-80"
         >
           Start Workout

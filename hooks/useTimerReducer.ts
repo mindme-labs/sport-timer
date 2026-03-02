@@ -198,7 +198,19 @@ export function timerReducer(
           totalCompletedSec: state.totalCompletedSec + exercise.durationSec,
         };
 
-        if (exercise.restAfterSec > 0) {
+        const isLastInSection = state.currentExercise + 1 >= exercises.length;
+        const isSinglePassSection =
+          state.section === "preparation" || state.section === "coolDown";
+        const isLastInMainFinalRound =
+          state.section === "main" &&
+          isLastInSection &&
+          state.currentRound + 1 >= state.workout!.rounds;
+
+        if (
+          exercise.restAfterSec > 0 &&
+          !(isLastInSection && isSinglePassSection) &&
+          !isLastInMainFinalRound
+        ) {
           return {
             ...updatedState,
             phase: "resting" as TimerPhase,
@@ -295,6 +307,13 @@ export function timerReducer(
 
       const nextExIdx = state.currentExercise + 1;
       if (nextExIdx < exercises.length) {
+        if (exercise.restAfterSec > 0) {
+          return {
+            ...updatedState,
+            phase: "resting",
+            secondsRemaining: exercise.restAfterSec,
+          };
+        }
         return {
           ...updatedState,
           phase: "exercising",

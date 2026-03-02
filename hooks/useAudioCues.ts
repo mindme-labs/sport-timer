@@ -62,5 +62,12 @@ export function useAudioCues() {
     };
   }, []);
 
-  return { playCountdownBeep, playExerciseSwitchBeep };
+  const initAudio = useCallback(() => {
+    const ctx = getContext();
+    if (ctx && ctx.state === "suspended") {
+      ctx.resume();
+    }
+  }, [getContext]);
+
+  return { playCountdownBeep, playExerciseSwitchBeep, initAudio };
 }
