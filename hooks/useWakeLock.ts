@@ -6,6 +6,10 @@ export function useWakeLock() {
   const [isSupported, setIsSupported] = useState(true);
   const [isActive, setIsActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  // Whether the lock *should* be held. The OS releases the sentinel when the
+  // app is backgrounded (which flips isActive to false), so we can't rely on
+  // isActive to decide whether to re-acquire on return — we track intent here.
+  const shouldHoldRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && !("wakeLock" in navigator)) {
@@ -15,10 +19,20 @@ export function useWakeLock() {
 
   const acquire = useCallback(async () => {
     if (typeof window === "undefined" || !("wakeLock" in navigator)) return;
+    shouldHoldRef.current = true;
+    // Avoid stacking multiple sentinels if acquire() is called repeatedly.
+    if (wakeLockRef.current) return;
     try {
-      wakeLockRef.current = await navigator.wakeLock.request("screen");
+      const sentinel = await navigator.wakeLock.request("screen");
+      wakeLockRef.current = sentinel;
       setIsActive(true);
-      wakeLockRef.current.addEventListener("release", () => {
+      sentinel.addEventListener("release", () => {
+        // Fired both on manual release and when the OS drops the lock on
+        // backgrounding. Clear the ref so a later re-acquire can request a
+        // fresh sentinel.
+        if (wakeLockRef.current === sentinel) {
+          wakeLockRef.current = null;
+        }
         setIsActive(false);
       });
     } catch {
@@ -27,6 +41,7 @@ export function useWakeLock() {
   }, []);
 
   const release = useCallback(async () => {
+    shouldHoldRef.current = false;
     if (wakeLockRef.current) {
       try {
         await wakeLockRef.current.release();
@@ -39,9 +54,11 @@ export function useWakeLock() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === "visible" && isActive) {
-        await acquire();
+    const handleVisibilityChange = () => {
+      // Re-acquire when returning to the app if the lock is still wanted, even
+      // though isActive is false after the OS released it while backgrounded.
+      if (document.visibilityState === "visible" && shouldHoldRef.current) {
+        acquire();
       }
     };
 
@@ -49,7 +66,7 @@ export function useWakeLock() {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isActive, acquire]);
+  }, [acquire]);
 
   useEffect(() => {
     return () => {

@@ -200,7 +200,9 @@ export default function TimerDisplay({
       ? exercises[nextExIdx].name
       : section === "main" && state.currentRound + 1 < workout.rounds
         ? exercises[0].name
-        : null;
+        : section === "preparation"
+          ? workout.exercises[0]?.name ?? null
+          : null;
 
   const isResting = state.phase === "resting" || state.phase === "roundResting";
   const isPaused = state.phase === "paused";

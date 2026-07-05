@@ -199,18 +199,19 @@ export function timerReducer(
         };
 
         const isLastInSection = state.currentExercise + 1 >= exercises.length;
-        const isSinglePassSection =
-          state.section === "preparation" || state.section === "coolDown";
-        const isLastInMainFinalRound =
-          state.section === "main" &&
-          isLastInSection &&
-          state.currentRound + 1 >= state.workout!.rounds;
 
-        if (
-          exercise.restAfterSec > 0 &&
-          !(isLastInSection && isSinglePassSection) &&
-          !isLastInMainFinalRound
-        ) {
+        // Skip the per-exercise rest when nothing meaningful follows it:
+        //  - cool down's final exercise → the workout is over.
+        //  - main's last exercise in ANY round → between rounds the round rest
+        //    already provides the single pause (issue #3: no double rest), and
+        //    on the final round the workout ends / cool down follows.
+        // The preparation section's final exercise KEEPS its rest — that is the
+        // pause between the warm-up and the main cycle (issue #2).
+        const skipExerciseRest =
+          (state.section === "coolDown" && isLastInSection) ||
+          (state.section === "main" && isLastInSection);
+
+        if (exercise.restAfterSec > 0 && !skipExerciseRest) {
           return {
             ...updatedState,
             phase: "resting" as TimerPhase,
