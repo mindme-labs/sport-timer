@@ -1,4 +1,4 @@
-const CACHE_NAME = "timetotrain-v3";
+const CACHE_NAME = "timetotrain-v4";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
