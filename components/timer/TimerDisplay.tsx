@@ -79,6 +79,7 @@ export default function TimerDisplay({
   const [saving, setSaving] = useState(false);
   const [skipFlash, setSkipFlash] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const pausedByHelpRef = useRef(false);
   const prevPhaseRef = useRef<TimerPhase>("idle");
   const prevExerciseRef = useRef(0);
   const prevRoundRef = useRef(0);
@@ -212,6 +213,22 @@ export default function TimerDisplay({
   const bgClass = getBackgroundClass(state.phase, section, showStopModal);
   const sectionLabel = getSectionLabel(section);
 
+  const openHelp = () => {
+    if (state.phase === "exercising") {
+      pause();
+      pausedByHelpRef.current = true;
+    }
+    setShowHelp(true);
+  };
+
+  const closeHelp = () => {
+    setShowHelp(false);
+    if (pausedByHelpRef.current) {
+      pausedByHelpRef.current = false;
+      resume();
+    }
+  };
+
   const progressPercent =
     state.totalPlannedSec > 0
       ? (state.totalCompletedSec / state.totalPlannedSec) * 100
@@ -268,7 +285,7 @@ export default function TimerDisplay({
           currentExercise &&
           getExerciseGuide(currentExercise.name) && (
             <button
-              onClick={() => setShowHelp(true)}
+              onClick={openHelp}
               className="mb-4 flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium text-white active:bg-white/30"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -329,7 +346,7 @@ export default function TimerDisplay({
         <ExerciseHelpSheet
           name={currentExercise.name}
           description={currentExercise.description}
-          onClose={() => setShowHelp(false)}
+          onClose={closeHelp}
         />
       )}
     </div>
