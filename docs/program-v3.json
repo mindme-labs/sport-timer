@@ -1,0 +1,166 @@
+{
+  "cycleLengthDays": 7,
+  "routines": [
+    {
+      "cycleDayNumber": 1,
+      "description": "Бодрый старт: всё тело",
+      "workouts": [
+        {
+          "workoutId": "v3-mon",
+          "name": "Бодрый старт (всё тело)",
+          "description": "Энергичный вход в неделю: разгоняем кровь и заряжаемся. Работаем бодро, но оставляем 2 повтора в запасе.",
+          "rounds": 3,
+          "restAfterRoundSec": 30,
+          "preparation": [
+            { "name": "Разминка суставов", "description": "Плавные круговые движения: шея, плечи, руки, таз, колени, голеностоп", "durationSec": 90, "restAfterSec": 0 },
+            { "name": "«Кошка»: прогибы спины на четвереньках", "description": "Плавно округляем и прогибаем спину в такт дыханию — будим позвоночник после сна", "durationSec": 60, "restAfterSec": 0 },
+            { "name": "Махи ногами у опоры", "description": "Держась за стену, махи вперёд-назад, по 20 секунд на каждую ногу", "durationSec": 40, "restAfterSec": 0 },
+            { "name": "Скакалка или бой с тенью (1)", "description": "Лёгкий темп, мягкие прыжки на носках", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (2)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (3)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 }
+          ],
+          "exercises": [
+            { "name": "Прыжки «звёздочка»", "description": "Ноги прыжком в стороны, руки через стороны вверх. Мягкое приземление на носки", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Приседания", "description": "Опускаемся до уровня бёдер параллельно полу, спина прямая, пятки на полу", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Отжимания", "description": "Тело прямое, грудь к полу. При усталости опускаем колени на пол", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Ягодичный мостик", "description": "Лёжа на спине, толчком пяток поднимаем таз, пауза 1 секунду вверху", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Планка на локтях", "description": "Тело в одну прямую линию, живот напряжён, таз не поднимаем", "durationSec": 45, "restAfterSec": 15 }
+          ],
+          "coolDown": [
+            { "name": "Вис на турнике", "description": "Свободно висим, расслабляем спину и плечи", "durationSec": 60, "restAfterSec": 5 },
+            { "name": "Растяжка спины с ремнём", "description": "Сидя, тянемся за ремнём вперёд, округляя спину", "durationSec": 90, "restAfterSec": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "cycleDayNumber": 2,
+      "description": "Живот + лёгкое кардио",
+      "workouts": [
+        {
+          "workoutId": "v3-tue",
+          "name": "Живот и лёгкое кардио",
+          "description": "Укрепляем пресс и держим ровный пульс. Комфортная нагрузка.",
+          "rounds": 3,
+          "restAfterRoundSec": 30,
+          "preparation": [
+            { "name": "Разминка суставов", "description": "Плавные круговые движения: шея, плечи, руки, таз, колени, голеностоп", "durationSec": 90, "restAfterSec": 0 },
+            { "name": "«Кошка»: прогибы спины на четвереньках", "description": "Плавно округляем и прогибаем спину в такт дыханию", "durationSec": 60, "restAfterSec": 0 },
+            { "name": "Махи ногами у опоры", "description": "Держась за стену, махи вперёд-назад, по 20 секунд на каждую ногу", "durationSec": 40, "restAfterSec": 0 },
+            { "name": "Скакалка или бой с тенью (1)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (2)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (3)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 }
+          ],
+          "exercises": [
+            { "name": "Скакалка или бег на месте", "description": "Держим ровный средний темп", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Планка на локтях", "description": "Тело прямое, таз не проваливается и не задирается", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Велосипед", "description": "Лёжа на спине, локоть тянем к противоположному колену, медленно", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Подъём ног лёжа", "description": "Лёжа на спине, поднимаем прямые ноги и медленно опускаем, не касаясь пола. Поясница прижата", "durationSec": 45, "restAfterSec": 15 },
+            { "name": "Подтягивание коленей в упоре лёжа", "description": "Из планки поочерёдно подтягиваем колени к груди, без прыжков", "durationSec": 45, "restAfterSec": 15 }
+          ],
+          "coolDown": [
+            { "name": "Прогиб «кобра»", "description": "Лёжа на животе, мягко поднимаем грудь, таз остаётся на полу", "durationSec": 60, "restAfterSec": 5 },
+            { "name": "Скручивание спины лёжа", "description": "Лёжа на спине, колени уводим в одну сторону, по 45 секунд на каждую", "durationSec": 90, "restAfterSec": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "cycleDayNumber": 3,
+      "description": "Верх тела",
+      "workouts": [
+        {
+          "workoutId": "v3-wed",
+          "name": "Верх тела",
+          "description": "Спина, грудь, руки. Работаем чисто, не до отказа — оставляем 2 повтора в запасе.",
+          "rounds": 3,
+          "restAfterRoundSec": 30,
+          "preparation": [
+            { "name": "Разминка суставов", "description": "Плавные круговые движения: шея, плечи, руки, таз, колени, голеностоп", "durationSec": 90, "restAfterSec": 0 },
+            { "name": "«Кошка»: прогибы спины на четвереньках", "description": "Плавно округляем и прогибаем спину в такт дыханию", "durationSec": 60, "restAfterSec": 0 },
+            { "name": "Махи ногами у опоры", "description": "Держась за стену, махи вперёд-назад, по 20 секунд на каждую ногу", "durationSec": 40, "restAfterSec": 0 },
+            { "name": "Скакалка или бой с тенью (1)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (2)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (3)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 }
+          ],
+          "exercises": [
+            { "name": "Подтягивания (средний хват)", "description": "Тянемся грудью к перекладине, без рывков и раскачки. Не до отказа", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Отжимания от пола", "description": "Тело прямое, локти назад под углом 45°, грудь к полу", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Горизонтальные подтягивания", "description": "Лёжа под низкой перекладиной, тело прямое под наклоном, тянем грудь к рукам. Чем горизонтальнее корпус, тем тяжелее", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Отжимания от стула (на трицепс)", "description": "Спиной к стулу, руки на сиденье, ноги согнуты. Опускаемся, сгибая локти назад", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Лодочка", "description": "Лёжа на животе, одновременно поднимаем руки, грудь и ноги, тянемся в струну. Пауза 1 секунду вверху", "durationSec": 50, "restAfterSec": 15 }
+          ],
+          "coolDown": [
+            { "name": "Растяжка груди", "description": "Руки в замок за спиной, сводим лопатки, грудь вперёд", "durationSec": 60, "restAfterSec": 5 },
+            { "name": "Растяжка спины с ремнём", "description": "Сидя, тянемся за ремнём вперёд, округляя спину", "durationSec": 90, "restAfterSec": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "cycleDayNumber": 4,
+      "description": "Ноги + ягодицы",
+      "workouts": [
+        {
+          "workoutId": "v3-thu",
+          "name": "Ноги и ягодицы",
+          "description": "Нагрузка на низ тела, бережно для коленей. Даёт мощный заряд энергии.",
+          "rounds": 3,
+          "restAfterRoundSec": 30,
+          "preparation": [
+            { "name": "Разминка суставов", "description": "Плавные круговые движения: шея, плечи, руки, таз, колени, голеностоп", "durationSec": 90, "restAfterSec": 0 },
+            { "name": "«Кошка»: прогибы спины на четвереньках", "description": "Плавно округляем и прогибаем спину в такт дыханию", "durationSec": 60, "restAfterSec": 0 },
+            { "name": "Махи ногами у опоры", "description": "Держась за стену, махи вперёд-назад, по 20 секунд на каждую ногу", "durationSec": 40, "restAfterSec": 0 },
+            { "name": "Скакалка или бой с тенью (1)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (2)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (3)", "description": "Лёгкий темп", "durationSec": 40, "restAfterSec": 10 }
+          ],
+          "exercises": [
+            { "name": "Выпады назад", "description": "Шаг назад, опускаем заднее колено к полу. Колено передней ноги над пяткой, не выходит за носок. По 25 секунд на ногу", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Ягодичный мостик", "description": "Лёжа на спине, толчком пяток поднимаем таз, пауза 1 секунду вверху", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Приседания у стены («стульчик»)", "description": "Спиной к стене, колени согнуты под 90°, спина прижата. Держим положение", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Приседания с широкой постановкой ног", "description": "Ноги шире плеч, носки в стороны, приседаем не ниже параллели, колени в сторону носков", "durationSec": 50, "restAfterSec": 15 },
+            { "name": "Боковая планка", "description": "Опора на предплечье, тело в одну линию, таз не проваливается. По 25 секунд на сторону", "durationSec": 50, "restAfterSec": 15 }
+          ],
+          "coolDown": [
+            { "name": "Растяжка задней поверхности бедра с ремнём", "description": "Лёжа на спине, тянем прямую ногу ремнём к себе. По 60 секунд на ногу", "durationSec": 120, "restAfterSec": 0 },
+            { "name": "Поза ребёнка", "description": "Таз на пятках, руки максимально тянутся вперёд, спина расслаблена", "durationSec": 60, "restAfterSec": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "cycleDayNumber": 5,
+      "description": "Всё тело: интенсив (пик недели)",
+      "workouts": [
+        {
+          "workoutId": "v3-fri",
+          "name": "Всё тело: интенсив",
+          "description": "Пик недели: самый бодрый день, 4 круга. Дальше — выходные на восстановление.",
+          "rounds": 4,
+          "restAfterRoundSec": 30,
+          "preparation": [
+            { "name": "Разминка суставов", "description": "Плавные круговые движения: шея, плечи, руки, таз, колени, голеностоп", "durationSec": 90, "restAfterSec": 0 },
+            { "name": "«Кошка»: прогибы спины на четвереньках", "description": "Плавно округляем и прогибаем спину в такт дыханию", "durationSec": 60, "restAfterSec": 0 },
+            { "name": "Махи ногами у опоры", "description": "Держась за стену, махи вперёд-назад, по 20 секунд на каждую ногу", "durationSec": 40, "restAfterSec": 0 },
+            { "name": "Скакалка или бой с тенью (1)", "description": "Средний темп", "durationSec": 40, "restAfterSec": 10 },
+            { "name": "Скакалка или бой с тенью (2)", "description": "Средний темп", "durationSec": 40, "restAfterSec": 10 }
+          ],
+          "exercises": [
+            { "name": "Скакалка", "description": "Интенсивно, высокий темп, мягкое приземление", "durationSec": 50, "restAfterSec": 10 },
+            { "name": "Подтягивания (любой хват)", "description": "Выбираем удобный хват, тянемся грудью к перекладине", "durationSec": 50, "restAfterSec": 10 },
+            { "name": "Приседания с широкой постановкой ног", "description": "Ноги шире плеч, носки в стороны, не ниже параллели", "durationSec": 50, "restAfterSec": 10 },
+            { "name": "Отжимания от пола", "description": "Тело прямое, грудь к полу", "durationSec": 50, "restAfterSec": 10 },
+            { "name": "Подъём ног лёжа", "description": "Лёжа на спине, поднимаем прямые ноги и медленно опускаем, поясница прижата", "durationSec": 50, "restAfterSec": 10 }
+          ],
+          "coolDown": [
+            { "name": "Общая растяжка всего тела", "description": "Спокойно тянем уставшие мышцы, восстанавливаем дыхание", "durationSec": 150, "restAfterSec": 0 },
+            { "name": "Спокойное дыхание", "description": "5 медленных глубоких вдохов и выдохов, настраиваемся на бодрый день", "durationSec": 30, "restAfterSec": 0 }
+          ]
+        }
+      ]
+    },
+    { "cycleDayNumber": 6, "description": "Отдых и восстановление", "workouts": [] },
+    { "cycleDayNumber": 7, "description": "Отдых и восстановление", "workouts": [] }
+  ]
+}
