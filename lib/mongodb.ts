@@ -6,23 +6,20 @@ if (!uri) {
   throw new Error("Please define the ttt_MONGODB_URI environment variable");
 }
 
-const options = {};
-
-let clientPromise: Promise<MongoClient>;
+const options = {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 10000,
+};
 
 const globalWithMongo = global as typeof globalThis & {
   _mongoClientPromise?: Promise<MongoClient>;
 };
 
-if (process.env.NODE_ENV === "development") {
-  if (!globalWithMongo._mongoClientPromise) {
-    const client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
-  }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
+if (!globalWithMongo._mongoClientPromise) {
   const client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+  globalWithMongo._mongoClientPromise = client.connect();
 }
+
+const clientPromise = globalWithMongo._mongoClientPromise;
 
 export default clientPromise;

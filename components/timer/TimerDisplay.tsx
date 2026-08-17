@@ -7,6 +7,8 @@ import { useWakeLock } from "@/hooks/useWakeLock";
 import { useAudioCues } from "@/hooks/useAudioCues";
 import StopModal from "./StopModal";
 import WakeLockBanner from "./WakeLockBanner";
+import ExerciseHelpSheet from "@/components/ExerciseHelpSheet";
+import { getExerciseGuide } from "@/lib/exerciseGuide";
 import type { Workout, Exercise } from "@/lib/types";
 import type { TimerPhase, TimerSection } from "@/hooks/useTimerReducer";
 
@@ -76,6 +78,7 @@ export default function TimerDisplay({
   const [showStopModal, setShowStopModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [skipFlash, setSkipFlash] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const prevPhaseRef = useRef<TimerPhase>("idle");
   const prevExerciseRef = useRef(0);
   const prevRoundRef = useRef(0);
@@ -256,10 +259,25 @@ export default function TimerDisplay({
         </p>
 
         {!isResting && currentExercise?.description && (
-          <p className="mb-4 text-center text-sm text-white/70">
+          <p className="mb-2 text-center text-sm text-white/70">
             {currentExercise.description}
           </p>
         )}
+
+        {!isResting &&
+          currentExercise &&
+          getExerciseGuide(currentExercise.name) && (
+            <button
+              onClick={() => setShowHelp(true)}
+              className="mb-4 flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium text-white active:bg-white/30"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+              Как делать
+            </button>
+          )}
 
         <div className="text-[8rem] font-bold leading-none tracking-tighter text-white sm:text-[10rem]">
           {formatTime(state.secondsRemaining)}
@@ -304,6 +322,14 @@ export default function TimerDisplay({
           onSaveFinish={handleStopSave}
           onDiscard={handleStopDiscard}
           onCancel={() => setShowStopModal(false)}
+        />
+      )}
+
+      {showHelp && currentExercise && (
+        <ExerciseHelpSheet
+          name={currentExercise.name}
+          description={currentExercise.description}
+          onClose={() => setShowHelp(false)}
         />
       )}
     </div>

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import TimerDisplay from "@/components/timer/TimerDisplay";
+import ExerciseHelpSheet from "@/components/ExerciseHelpSheet";
+import { getExerciseGuide } from "@/lib/exerciseGuide";
 import { useAudioCues } from "@/hooks/useAudioCues";
 import { saveWorkoutLogAction } from "./actions";
 import type { Workout, Exercise } from "@/lib/types";
@@ -143,29 +145,54 @@ export default function WorkoutRunner({
 }
 
 function ExercisePreviewList({ exercises }: { exercises: Exercise[] }) {
+  const [helpFor, setHelpFor] = useState<Exercise | null>(null);
+
   return (
     <div className="flex flex-col gap-2">
-      {exercises.map((exercise, i) => (
-        <div key={i} className="rounded-xl border border-border p-3">
-          <div className="flex items-center justify-between">
-            <span className="font-medium">{exercise.name}</span>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{formatDuration(exercise.durationSec)}</span>
-              {exercise.restAfterSec > 0 && (
-                <>
-                  <span className="text-border">|</span>
-                  <span>{exercise.restAfterSec}s rest</span>
-                </>
-              )}
+      {exercises.map((exercise, i) => {
+        const hasGuide = getExerciseGuide(exercise.name) !== null;
+        return (
+          <div key={i} className="rounded-xl border border-border p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{exercise.name}</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>{formatDuration(exercise.durationSec)}</span>
+                {exercise.restAfterSec > 0 && (
+                  <>
+                    <span className="text-border">|</span>
+                    <span>{exercise.restAfterSec}s rest</span>
+                  </>
+                )}
+                {hasGuide && (
+                  <button
+                    onClick={() => setHelpFor(exercise)}
+                    aria-label={`Как делать: ${exercise.name}`}
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground active:bg-border"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <path d="M12 17h.01" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
+            {exercise.description && (
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                {exercise.description}
+              </p>
+            )}
           </div>
-          {exercise.description && (
-            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-              {exercise.description}
-            </p>
-          )}
-        </div>
-      ))}
+        );
+      })}
+
+      {helpFor && (
+        <ExerciseHelpSheet
+          name={helpFor.name}
+          description={helpFor.description}
+          onClose={() => setHelpFor(null)}
+        />
+      )}
     </div>
   );
 }
