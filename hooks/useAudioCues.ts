@@ -54,11 +54,23 @@ export function useAudioCues() {
   }, [playBeep]);
 
   // Called from a user gesture (the "Start Workout" tap) to unlock the shared
-  // AudioContext so later beeps are audible on mobile.
+  // AudioContext so later beeps are audible on mobile. resume() alone is not
+  // enough on iOS: WebAudio stays silent until an oscillator has actually run
+  // inside the gesture. So we also play a 0-gain (silent) tone to prime it.
   const initAudio = useCallback(() => {
     const ctx = getSharedContext();
-    if (ctx && ctx.state === "suspended") {
-      ctx.resume();
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.03);
+    } catch {
+      // best-effort priming; ignore if the context rejects it
     }
   }, []);
 
