@@ -9,12 +9,53 @@ import { useCallback } from "react";
 // be the one that plays the beeps — so on iOS the playing context would stay
 // suspended and produce no sound. Sharing one context fixes that.
 let sharedCtx: AudioContext | null = null;
+let gestureListenersAdded = false;
+
+// On iOS, WebAudio uses the "ambient" audio session by default, which is muted
+// by the Ring/Silent switch — so with the phone on silent the beeps never play.
+// The Audio Session API (Safari 17+) lets us switch to "playback", which plays
+// through the silent switch. Trade-off (chosen on purpose): playback pauses
+// music from other apps for the duration of the workout.
+function enablePlaybackAudioSession() {
+  const nav = navigator as Navigator & { audioSession?: { type: string } };
+  if (nav.audioSession && nav.audioSession.type !== "playback") {
+    try {
+      nav.audioSession.type = "playback";
+    } catch {
+      // older Safari / unsupported value — fall back to the default session
+    }
+  }
+}
+
+// Safari can leave the context "suspended" (autoplay policy, backgrounding) or
+// "interrupted" (phone call, Siri, screen lock, another app took audio). Both
+// mean silence, and resume() only reliably works inside a user gesture.
+function wakeContext(ctx: AudioContext) {
+  if (ctx.state !== "running") {
+    ctx.resume().catch(() => {});
+  }
+}
 
 function getSharedContext(): AudioContext | null {
   if (typeof window === "undefined") return null;
-  if (!sharedCtx) {
+  if (!sharedCtx || sharedCtx.state === "closed") {
+    enablePlaybackAudioSession();
     sharedCtx = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
+  }
+  if (!gestureListenersAdded) {
+    gestureListenersAdded = true;
+    // Any tap during the workout (pause, skip, help) re-unlocks the context if
+    // iOS suspended or interrupted it, e.g. after the app returned from the
+    // background — beeps fired from timers alone can't resume it.
+    const unlock = () => {
+      if (sharedCtx) wakeContext(sharedCtx);
+    };
+    document.addEventListener("touchend", unlock, { passive: true });
+    document.addEventListener("pointerdown", unlock, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") unlock();
+    });
   }
   return sharedCtx;
 }
@@ -24,9 +65,7 @@ export function useAudioCues() {
     const ctx = getSharedContext();
     if (!ctx) return;
 
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
+    wakeContext(ctx);
 
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
@@ -58,9 +97,11 @@ export function useAudioCues() {
   // enough on iOS: WebAudio stays silent until an oscillator has actually run
   // inside the gesture. So we also play a 0-gain (silent) tone to prime it.
   const initAudio = useCallback(() => {
+    if (typeof window === "undefined") return;
+    enablePlaybackAudioSession();
     const ctx = getSharedContext();
     if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume();
+    wakeContext(ctx);
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
